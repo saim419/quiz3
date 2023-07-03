@@ -1,35 +1,41 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text } from 'react-native';
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, Button } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { ProfileContext } from './ProfileContext';
 
 const BmiScreen = () => {
-    const [ageInYears, setAgeInYears] = useState('');
-    const [ageInWeeks, setAgeInWeeks] = useState('');
-    const [ageInDays, setAgeInDays] = useState('');
+    const navigation = useNavigation();
+    const route = useRoute();
+    const { name, age, weight, height } = useContext(ProfileContext);
 
-    const calculateAge = (age) => {
-        const years = parseInt(age);
-        const weeks = years * 52;
-        const days = years * 365;
-
-        setAgeInYears(years.toString());
-        setAgeInWeeks(weeks.toString());
-        setAgeInDays(days.toString());
+    const calculateBmi = () => {
+        // Perform BMI calculation based on height and weight
+        const heightInMeters = height / 100; // Convert height from cm to meters
+        const bmi = weight / (heightInMeters * heightInMeters);
+        return bmi.toFixed(2); // Return BMI rounded to 2 decimal places
     };
 
+    const [bmi, setBmi] = useState('');
+
     useEffect(() => {
-        // Calculate the age when the component mounts
-        calculateAge('');
-    }, []);
+        const bmi = calculateBmi();
+        setBmi(bmi);
+    }, [weight, height]);
+
+
 
     return (
-        <View style={{ flex: 1, alignItems: 'left', justifyContent: 'left' }}>
+        <View style={{ flex: 1, alignItems: 'flex-start', justifyContent: 'flex-start' }}>
             <Text style={{ fontSize: 15 }}>BMI Calculator</Text>
-            <Text style={{ fontSize: 15 }}>height: {ageInYears}</Text>
-            <Text style={{ fontSize: 15 }}>weight: {ageInWeeks}</Text>
-            <Text style={{ fontSize: 15 }}>Age : {ageInDays}</Text>
+            <Text style={{ fontSize: 15 }}>Name: {name}</Text>
+            <Text style={{ fontSize: 15 }}>Age: {age}</Text>
+            <Text style={{ fontSize: 15 }}>Height: {height} cm</Text>
+            <Text style={{ fontSize: 15 }}>Weight: {weight} kg</Text>
+            <Text style={{ fontSize: 15 }}>BMI: {bmi}</Text>
+
         </View>
     );
-
 };
 
-export default AgeScreen;
+export default BmiScreen;
+
